@@ -15,10 +15,23 @@
 #include "image_transport/camera_publisher.hpp"
 #include "image_transport/image_transport.hpp"
 #include "rclcpp/node.hpp"
-#include "rclcpp/qos_overriding_options.hpp"
+// #include "rclcpp/qos_overriding_options.hpp"
+// #include "rclcpp/publisher_options.hpp"
 
 namespace depthai_ros_driver {
 namespace dai_nodes {
+
+// // Define QoS overriding options
+// rclcpp::QosOverridingOptions qos_overriding_options(
+//     {rclcpp::QosPolicyKind::Reliability, rclcpp::QosPolicyKind::Depth}
+//     // Optionally, add a validation callback and ID here
+// );
+
+// // Create PublisherOptionsWithAllocator and set the QoS overriding options
+// rclcpp::PublisherOptionsWithAllocator<std::allocator<void>> publisher_options;
+// publisher_options.qos_overriding_options = qos_overriding_options;
+
+
 RGB::RGB(const std::string& daiNodeName,
          rclcpp::Node* node,
          std::shared_ptr<dai::Pipeline> pipeline,
@@ -100,8 +113,8 @@ void RGB::setupQueues(std::shared_ptr<dai::Device> device) {
         }
         colorQ = device->getOutputQueue(ispQName, ph->getParam<int>("i_max_q_size"), false);
         if(ipcEnabled()) {
-            rgbPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/image_raw", 10, rclcpp::QosOverridingOptions{true});
-            rgbInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/camera_info", 10, rclcpp::QosOverridingOptions{true});
+            rgbPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/image_raw",  rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)));
+            rgbInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/camera_info",  rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)));
             colorQ->addCallback(std::bind(sensor_helpers::splitPub,
                                           std::placeholders::_1,
                                           std::placeholders::_2,
@@ -145,8 +158,8 @@ void RGB::setupQueues(std::shared_ptr<dai::Device> device) {
             previewQ->addCallback(
                 std::bind(sensor_helpers::basicCameraPub, std::placeholders::_1, std::placeholders::_2, *imageConverter, previewPubIT, previewInfoManager));
         } else {
-            previewPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/preview/image_raw", 10, rclcpp::QosOverridingOptions{true});
-            previewInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/preview/camera_info", 10, rclcpp::QosOverridingOptions{true});
+            previewPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/preview/image_raw",  rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)));
+            previewInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/preview/camera_info", rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)));
             previewQ->addCallback(std::bind(sensor_helpers::splitPub,
                                             std::placeholders::_1,
                                             std::placeholders::_2,
