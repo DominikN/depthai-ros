@@ -99,8 +99,8 @@ void RGB::setupQueues(std::shared_ptr<dai::Device> device) {
         }
         colorQ = device->getOutputQueue(ispQName, ph->getParam<int>("i_max_q_size"), false);
         if(ipcEnabled()) {
-            rgbPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/image_raw", 10);
-            rgbInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/camera_info", 10);
+            rgbPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/image_raw", KeepLast{10}, QosOverridingOptions{true});
+            rgbInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/camera_info", KeepLast{10}, QosOverridingOptions{true});
             colorQ->addCallback(std::bind(sensor_helpers::splitPub,
                                           std::placeholders::_1,
                                           std::placeholders::_2,
@@ -144,8 +144,8 @@ void RGB::setupQueues(std::shared_ptr<dai::Device> device) {
             previewQ->addCallback(
                 std::bind(sensor_helpers::basicCameraPub, std::placeholders::_1, std::placeholders::_2, *imageConverter, previewPubIT, previewInfoManager));
         } else {
-            previewPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/preview/image_raw", 10);
-            previewInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/preview/camera_info", 10);
+            previewPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/preview/image_raw", KeepLast{10}, QosOverridingOptions{true});
+            previewInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/preview/camera_info", KeepLast{10}, QosOverridingOptions{true});
             previewQ->addCallback(std::bind(sensor_helpers::splitPub,
                                             std::placeholders::_1,
                                             std::placeholders::_2,
