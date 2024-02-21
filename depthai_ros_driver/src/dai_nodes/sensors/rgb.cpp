@@ -15,6 +15,7 @@
 #include "image_transport/camera_publisher.hpp"
 #include "image_transport/image_transport.hpp"
 #include "rclcpp/node.hpp"
+#include <qos_overriding_options.hpp>
 
 namespace depthai_ros_driver {
 namespace dai_nodes {
