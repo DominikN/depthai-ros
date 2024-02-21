@@ -100,8 +100,8 @@ void RGB::setupQueues(std::shared_ptr<dai::Device> device) {
         }
         colorQ = device->getOutputQueue(ispQName, ph->getParam<int>("i_max_q_size"), false);
         if(ipcEnabled()) {
-            rgbPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/image_raw", 10, QosOverridingOptions{true});
-            rgbInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/camera_info", 10, QosOverridingOptions{true});
+            rgbPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/image_raw", 10, rclcpp::QosOverridingOptions{true});
+            rgbInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/camera_info", 10, rclcpp::QosOverridingOptions{true});
             colorQ->addCallback(std::bind(sensor_helpers::splitPub,
                                           std::placeholders::_1,
                                           std::placeholders::_2,
@@ -145,8 +145,8 @@ void RGB::setupQueues(std::shared_ptr<dai::Device> device) {
             previewQ->addCallback(
                 std::bind(sensor_helpers::basicCameraPub, std::placeholders::_1, std::placeholders::_2, *imageConverter, previewPubIT, previewInfoManager));
         } else {
-            previewPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/preview/image_raw", 10, QosOverridingOptions{true});
-            previewInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/preview/camera_info", 10, QosOverridingOptions{true});
+            previewPub = getROSNode()->create_publisher<sensor_msgs::msg::Image>("~/" + getName() + "/preview/image_raw", 10, rclcpp::QosOverridingOptions{true});
+            previewInfoPub = getROSNode()->create_publisher<sensor_msgs::msg::CameraInfo>("~/" + getName() + "/preview/camera_info", 10, rclcpp::QosOverridingOptions{true});
             previewQ->addCallback(std::bind(sensor_helpers::splitPub,
                                             std::placeholders::_1,
                                             std::placeholders::_2,
